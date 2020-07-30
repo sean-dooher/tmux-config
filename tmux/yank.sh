@@ -13,8 +13,11 @@ copy_backend_remote_tunnel_port=$(tmux show-option -gvq "@copy_backend_remote_tu
 copy_use_osc52_fallback=$(tmux show-option -gvq "@copy_use_osc52_fallback")
 
 # Resolve copy backend: pbcopy (OSX), reattach-to-user-namespace (OSX), xclip/xsel (Linux)
+# Default to OSC 52 if connected via SSH
 copy_backend=""
-if is_app_installed pbcopy; then
+if [ -n "$SSH_CLIENT" ]; then
+  copy_backend=""
+elif is_app_installed pbcopy; then
   copy_backend="pbcopy"
 elif is_app_installed reattach-to-user-namespace; then
   copy_backend="reattach-to-user-namespace pbcopy"
